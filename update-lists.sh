@@ -19,6 +19,13 @@ GITHUB_API="https://api.github.com/advisories"
 
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
+LAST_UPDATED_FILE="$SCRIPT_DIR/LAST_UPDATED.txt"
+
+# ── Read last check date (for incremental updates) ───────────────
+LAST_CHECK=""
+if [[ -f "$LAST_UPDATED_FILE" ]]; then
+    LAST_CHECK=$(grep '^Last checked:' "$LAST_UPDATED_FILE" | head -1 | sed 's/Last checked: //')
+fi
 
 # ── Output helpers ────────────────────────────────────────────────
 info()   { echo "[INFO] $*"; }
@@ -49,6 +56,18 @@ else
     info "Anonymous — rate limit: 60 req/hr"
 fi
 
+# ── Mode: incremental (default) or full ───────────────────────────
+FULL_SCAN=false
+if [[ "${1:-}" == "--full" ]]; then
+    FULL_SCAN=true
+    info "Mode: FULL SCAN (all pages)"
+elif [[ -n "$LAST_CHECK" ]]; then
+    info "Mode: incremental (since $LAST_CHECK)"
+else
+    FULL_SCAN=true
+    info "Mode: FULL SCAN (first run)"
+fi
+
 # ═══════════════════════════════════════════════════════════════════
 #  Fetch all malware advisories for a given ecosystem
 # ═══════════════════════════════════════════════════════════════════
@@ -59,13 +78,20 @@ fetch_malware() {
     : > "$raw"
     local page=1 total_advisories=0
 
-    info "Fetching $ecosystem malware advisories..."
+    # Build query: incremental (updated since last check) or full
+    local base_query="type=malware&ecosystem=$ecosystem&per_page=100"
+    if [[ "$FULL_SCAN" == "false" && -n "$LAST_CHECK" ]]; then
+        base_query="${base_query}&updated=${LAST_CHECK}"
+        info "Fetching $ecosystem advisories updated since $LAST_CHECK..."
+    else
+        info "Fetching ALL $ecosystem malware advisories..."
+    fi
 
     while true; do
         local tmp="$WORK/resp_${ecosystem}_${page}.json"
         local http_code
         http_code=$(github_curl -o "$tmp" -w "%{http_code}" \
-            "$GITHUB_API?type=malware&ecosystem=$ecosystem&per_page=100&page=$page" 2>/dev/null) || true
+            "$GITHUB_API?${base_query}&page=$page" 2>/dev/null) || true
 
         if [[ "$http_code" == "403" ]]; then
             warn "Rate limited at page $page"
