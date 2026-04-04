@@ -1,0 +1,10 @@
+# Malicious package blocklist — plaintext (one entry per line)
+# Comments start with #. Empty lines are ignored.
+
+Microsoft.json
+Fake.GGT.Config
+Net.FraMework.KDutil
+MSBuild.TaskRunner
+Net.DllLoader
+Net.Help.callback
+System.Data.Encrypt

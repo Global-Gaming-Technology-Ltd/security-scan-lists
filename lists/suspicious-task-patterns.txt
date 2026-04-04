@@ -1,0 +1,17 @@
+# ENCODED:REVERSE
+# ══════════════════════════════════════════════════════════════════════════════
+# Suspicious scheduled task command patterns (wildcard)
+# One pattern per line. Comments start with #. Empty lines are ignored.
+# ══════════════════════════════════════════════════════════════════════════════
+*neddih*llehsrewop*
+*ssapyb*
+*gnirtsdaolnwod*
+*tneilcbew*
+*noisserpxe-ekovni*
+*xei*
+*edoced*litutrec*
+*refsnart*nimdastib*
+*athsm*
+*tpircsw*
+*tpircsc*
+*s/*23rvsger*

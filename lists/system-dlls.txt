@@ -1,0 +1,24 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# System DLL names to check for DLL hijacking
+# If found outside System32, they indicate a DLL sideloading attack.
+# One name per line. Comments start with #. Empty lines are ignored.
+# ══════════════════════════════════════════════════════════════════════════════
+version.dll
+dwmapi.dll
+userenv.dll
+winhttp.dll
+wtsapi32.dll
+dbghelp.dll
+dbgcore.dll
+uxtheme.dll
+propsys.dll
+ntmarta.dll
+cryptsp.dll
+profapi.dll
+secur32.dll
+netapi32.dll
+dnsapi.dll
+amsi.dll
+clr.dll
+mscoree.dll
+mscorlib.dll

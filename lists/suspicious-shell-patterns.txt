@@ -1,0 +1,20 @@
+# ENCODED:REVERSE
+# ══════════════════════════════════════════════════════════════════════════════
+# Suspicious shell profile patterns (macOS/Linux)
+# These patterns in .zshrc, .bashrc, .bash_profile, .zprofile indicate compromise.
+# One pattern per line (regex). Comments start with #. Empty lines are ignored.
+# ══════════════════════════════════════════════════════════════════════════════
+hsab*.|\*.lruc
+hs*.|\*.lruc
+hsab*.|\*.tegw
+hs*.|\*.tegw
+lruc(\$\*.lave
+tegw(\$\*.lave
+edoced*.46esab
+tekcos*.tropmi*.c-*.nohtyp
+e-+s\cn
+e-*.tacn
+/pct/ved/
+pct/ved/*.&>*.i-+s\hsab
+tpircs.llehs.od*.e-*.tpircsaso
+tneilc_s*.lssnepo

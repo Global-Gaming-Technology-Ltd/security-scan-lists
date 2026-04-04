@@ -1,0 +1,26 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# Safe processes allowed to have open listening ports on macOS
+# One name per line. Comments start with #. Empty lines are ignored.
+# ══════════════════════════════════════════════════════════════════════════════
+launchd
+mDNSResponder
+rapportd
+sharingd
+AirPlayXPCHelper
+WiFiAgent
+bluetoothd
+identityservicesd
+apsd
+Code
+Code Helper
+node
+postgres
+mysqld
+redis-server
+httpd
+nginx
+com.docker.backend
+vpnkit
+remoted
+ControlCenter
+BrowserStackLocal

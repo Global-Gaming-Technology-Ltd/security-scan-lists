@@ -1,0 +1,99 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# Safe (whitelisted) process names - macOS core + common applications
+# One name per line. Comments start with #. Empty lines are ignored.
+# ══════════════════════════════════════════════════════════════════════════════
+
+# ── Browsers ─────────────────────────────────────────────────────────
+Google Chrome
+Google Chrome Helper
+Safari
+firefox
+Microsoft Edge
+
+# ── macOS core ───────────────────────────────────────────────────────
+kernel_task
+launchd
+WindowServer
+loginwindow
+Finder
+Dock
+SystemUIServer
+mds
+mds_stores
+mdworker
+mdworker_shared
+coreaudiod
+coreservicesd
+distnoted
+cfprefsd
+lsd
+trustd
+securityd
+opendirectoryd
+configd
+syslogd
+taskgated
+notifyd
+UserEventAgent
+sharingd
+softwareupdated
+corebrightnessd
+airportd
+bluetoothd
+powerd
+thermald
+diskarbitrationd
+fseventsd
+backupd
+remoted
+
+# ── Apple Apps ───────────────────────────────────────────────────────
+Mail
+Calendar
+Messages
+Notes
+Photos
+Music
+Preview
+TextEdit
+Terminal
+iTerm2
+Activity Monitor
+
+# ── Microsoft Apps ───────────────────────────────────────────────────
+Microsoft Outlook
+Microsoft Teams
+Microsoft Word
+Microsoft Excel
+Microsoft PowerPoint
+Microsoft OneNote
+OneDrive
+
+# ── Dev tools ────────────────────────────────────────────────────────
+Code Helper
+Electron
+node
+python3
+ruby
+java
+git
+Code
+Xcode
+
+# ── System UI ────────────────────────────────────────────────────────
+ControlCenter
+
+# ── Common apps ──────────────────────────────────────────────────────
+Spotify
+Slack
+Discord
+Grammarly
+BrowserStackLocal
+zoom.us
+1Password
+Bartender
+Alfred
+Raycast
+CleanMyMac
+Magnet
+Rectangle

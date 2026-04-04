@@ -1,0 +1,14 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# Suspicious ports commonly used by hacking tools / reverse shells
+# One port per line. Comments start with #. Empty lines are ignored.
+# ══════════════════════════════════════════════════════════════════════════════
+4444
+5555
+6666
+1234
+31337
+12345
+54321
+6667
+6668
+6669

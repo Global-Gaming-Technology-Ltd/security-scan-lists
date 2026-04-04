@@ -1,0 +1,14 @@
+# ENCODED:REVERSE
+# ══════════════════════════════════════════════════════════════════════════════
+# Suspicious registry Run key value patterns (wildcard)
+# One pattern per line. Comments start with #. Empty lines are ignored.
+# ══════════════════════════════════════════════════════════════════════════════
+*cne-*llehsrewop*
+*neddih*llehsrewop*
+*athsm*
+*tpircsw*
+*tpircsc*
+*23rvsger*
+*tpircsavaj*23lldnur*
+*litutrec*
+*nimdastib*

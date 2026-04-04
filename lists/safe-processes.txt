@@ -1,0 +1,103 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# Safe (whitelisted) process names - Windows core + common applications
+# One name per line. Comments start with #. Empty lines are ignored.
+# ══════════════════════════════════════════════════════════════════════════════
+
+# ── Browsers ─────────────────────────────────────────────────────────
+chrome
+firefox
+msedge
+msedgewebview2
+
+# ── Windows core ─────────────────────────────────────────────────────
+explorer
+searchhost
+startmenuexperiencehost
+runtimebroker
+svchost
+services
+lsass
+csrss
+wininit
+winlogon
+dwm
+sihost
+taskhostw
+ctfmon
+fontdrvhost
+spoolsv
+
+# ── Microsoft Apps ───────────────────────────────────────────────────
+onedrive
+onedrive.sync.service
+teams
+ms-teams
+outlook
+excel
+winword
+powerpnt
+onenote
+
+# ── System utilities ─────────────────────────────────────────────────
+notepad
+notepad++
+powershell
+pwsh
+cmd
+code
+taskmgr
+mmc
+regedit
+snippingtool
+calculator
+
+# ── System services ──────────────────────────────────────────────────
+audiodg
+conhost
+dllhost
+msiexec
+smartscreen
+securityhealthservice
+securityhealthsystray
+msmpeng
+
+# ── Shell / UI ───────────────────────────────────────────────────────
+shellexperiencehost
+applicationframehost
+systemsettings
+windowsterminal
+system
+idle
+registry
+memory compression
+
+# ── Search / indexing ────────────────────────────────────────────────
+searchindexer
+searchprotocolhost
+searchfilterhost
+
+# ── WMI ──────────────────────────────────────────────────────────────
+wmiprvse
+wmiapsrv
+dashost
+
+# ── Other ────────────────────────────────────────────────────────────
+phoneexperiencehost
+lockapp
+hpdrvextsvc
+hpcommrecovery
+supportassistagent
+rtkaududservice64
+realtek
+igfxem
+igfxtray
+logitechg
+logioptions
+logioptionsplus
+grammarly.desktop
+grammarly.webui
+lghub
+lghub_updater
+goodixsessionservice
+browserstacklocal
+browserstacklocalapp

@@ -1,0 +1,10 @@
+# Malicious package blocklist — plaintext (one entry per line)
+# Comments start with #. Empty lines are ignored.
+# ══════════════════════════════════════════════════════════════════════════════
+DllLoader
+Exploit
+Backdoor
+Keylogger
+Crypto.miner
+Reverse.shell
+Credential

@@ -1,0 +1,24 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# Safe processes allowed to have open listening ports
+# One name per line. Comments start with #. Empty lines are ignored.
+# ══════════════════════════════════════════════════════════════════════════════
+svchost
+system
+lsass
+services
+wininit
+spoolsv
+onedrive.sync.service
+hpdrvextsvc
+code
+postgres
+pg_ctl
+vmms
+discord
+com.docker.backend
+jhi_service
+lms
+goodixsessionservice
+grammarly.webui
+lghub_updater
+browserstacklocalapp

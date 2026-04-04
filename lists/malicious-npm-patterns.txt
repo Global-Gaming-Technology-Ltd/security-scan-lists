@@ -1,0 +1,13 @@
+# Malicious package blocklist — plaintext (one entry per line)
+# Comments start with #. Empty lines are ignored.
+# ══════════════════════════════════════════════════════════════════════════════
+^@[a-z]+-internal/
+-malicious$
+-backdoor$
+-exploit$
+-keylogger$
+^trivy-.*plugin
+-token-steal
+-credential-
+reverse.shell
+crypto.?miner

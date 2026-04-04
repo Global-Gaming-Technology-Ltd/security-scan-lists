@@ -1,0 +1,40 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# Sensitive environment variable names to check for credential exposure
+# One name per line. Comments start with #. Empty lines are ignored.
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Cloud providers
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AZURE_CLIENT_SECRET
+GCP_CREDENTIALS
+
+# Package registries
+NPM_TOKEN
+NUGET_API_KEY
+
+# Container registries
+DOCKER_PASSWORD
+
+# Source control / CI
+GITHUB_TOKEN
+GITLAB_TOKEN
+CI_JOB_TOKEN
+
+# Database
+DB_PASSWORD
+DATABASE_URL
+
+# Cryptographic
+PRIVATE_KEY
+SSH_PRIVATE_KEY
+SIGNING_KEY
+JWT_SECRET
+SECRET_KEY
+
+# Application
+API_SECRET
+WEBHOOK_SECRET
+VAULT_TOKEN
+STRIPE_SECRET_KEY
+TELEGRAM_BOT_TOKEN

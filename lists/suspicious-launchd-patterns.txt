@@ -1,0 +1,19 @@
+# ENCODED:REVERSE
+# ══════════════════════════════════════════════════════════════════════════════
+# Suspicious LaunchAgent/LaunchDaemon plist patterns (macOS)
+# These patterns in plist file contents indicate potential malware persistence.
+# One pattern per line. Comments start with #. Empty lines are ignored.
+# ══════════════════════════════════════════════════════════════════════════════
+hs*.|\*.lruc
+hs*.|\*.tegw
+/pmt/
+/pmt/rav/
+edoced*.46esab
+tropmi*.c-*.nohtyp
+llehs od*.e-*.tpircsaso
+esrever
+roodkcab
+renimotpyrc
+girmx
+llehs_dnib
+reterpretem

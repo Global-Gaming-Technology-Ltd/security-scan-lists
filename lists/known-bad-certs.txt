@@ -1,0 +1,13 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# Known bad root certificate issuer patterns (wildcard)
+# One pattern per line. Comments start with #. Empty lines are ignored.
+# ══════════════════════════════════════════════════════════════════════════════
+*superfish*
+*eDellRoot*
+*Privdog*
+*certum*test*
+*fake*
+*malware*
+*hack*
+*trojan*
+*proxy*debug*

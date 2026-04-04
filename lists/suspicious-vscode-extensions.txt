@@ -1,0 +1,10 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# Suspicious VS Code extension name patterns (wildcard)
+# One pattern per line. Comments start with #. Empty lines are ignored.
+# ══════════════════════════════════════════════════════════════════════════════
+*saveall*
+*beautif1er*
+*prettiest*
+*color-theme-darcula*
+*solidity-analyzer*
+*web3-snippets-malicious*
