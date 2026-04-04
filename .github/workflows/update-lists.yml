@@ -2,9 +2,16 @@ name: Update Blocklists
 
 on:
   schedule:
-    # Daily at 06:00 UTC
-    - cron: '0 6 * * *'
+    # Mon-Sat: incremental (only new since last check)
+    - cron: '0 6 * * 1-6'
+    # Sunday: full scan (all pages, safety net)
+    - cron: '0 6 * * 0'
   workflow_dispatch:
+    inputs:
+      full_scan:
+        description: 'Run full scan (all pages)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -20,26 +27,26 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           chmod +x update-lists.sh
-          ./update-lists.sh
-
-      - name: Check for changes
-        id: changes
-        run: |
-          if git diff --quiet lists/; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+          # Full scan on Sundays or when manually requested
+          DAY=$(date -u +%u)
+          if [[ "$DAY" == "7" || "${{ inputs.full_scan }}" == "true" ]]; then
+            ./update-lists.sh --full
           else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
+            ./update-lists.sh
           fi
 
       - name: Commit and push
-        if: steps.changes.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add lists/
-          SUMMARY=$(git diff --cached --stat | tail -1)
-          git commit -m "update malicious package blocklists
+          git add lists/ LAST_UPDATED.txt
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            SUMMARY=$(git diff --cached --stat | tail -1)
+            git commit -m "update blocklists — $(date -u '+%Y-%m-%d')
 
           $SUMMARY
           Source: GitHub Advisory Database (type=malware)"
-          git push
+            git push
+          fi
