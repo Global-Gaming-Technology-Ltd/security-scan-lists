@@ -160,5 +160,11 @@ info "npm: $(count_entries "$LISTS_DIR/malicious-npm-packages.txt") entries"
 info "nuget: $(count_entries "$LISTS_DIR/malicious-nuget-packages.txt") entries"
 
 # Write last-updated timestamp
-date -u '+%Y-%m-%dT%H:%M:%SZ' > "$LISTS_DIR/.last-updated"
-info "Done — $(cat "$LISTS_DIR/.last-updated")"
+TS=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+cat > "$SCRIPT_DIR/LAST_UPDATED.txt" <<EOF
+Last checked: $TS
+npm packages: $(count_entries "$LISTS_DIR/malicious-npm-packages.txt")
+nuget packages: $(count_entries "$LISTS_DIR/malicious-nuget-packages.txt")
+Source: GitHub Advisory Database (type=malware)
+EOF
+info "Done — $TS"
