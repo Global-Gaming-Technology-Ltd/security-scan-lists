@@ -2,10 +2,8 @@ name: Update Blocklists
 
 on:
   schedule:
-    # Mon-Sat: incremental (only new since last check)
-    - cron: '0 6 * * 1-6'
-    # Sunday: full scan (all pages, safety net)
-    - cron: '0 6 * * 0'
+    # Every 3 hours — only does real work when scan is incomplete
+    - cron: '0 */3 * * *'
   workflow_dispatch:
     inputs:
       full_scan:
@@ -22,20 +20,44 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check if scan needed
+        id: check
+        run: |
+          DAY=$(date -u +%u)
+          HOUR=$(date -u +%H)
+          # Always run if: manual trigger, Sunday full scan, or resuming incomplete scan
+          if [[ "${{ inputs.full_scan }}" == "true" ]]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "mode=full" >> "$GITHUB_OUTPUT"
+          elif [[ -f "SCAN_STATE.txt" ]]; then
+            echo "Incomplete scan detected — resuming"
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "mode=resume" >> "$GITHUB_OUTPUT"
+          elif [[ "$DAY" == "7" && "$HOUR" == "06" ]]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "mode=full" >> "$GITHUB_OUTPUT"
+          elif [[ "$HOUR" == "06" ]]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "mode=incremental" >> "$GITHUB_OUTPUT"
+          else
+            echo "No work needed — skipping"
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Update blocklists from GitHub Advisory Database
+        if: steps.check.outputs.run == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           chmod +x update-lists.sh
-          # Full scan on Sundays or when manually requested
-          DAY=$(date -u +%u)
-          if [[ "$DAY" == "7" || "${{ inputs.full_scan }}" == "true" ]]; then
-            ./update-lists.sh --full
+          if [[ "${{ steps.check.outputs.mode }}" == "full" ]]; then
+            ./update-lists.sh --full --max-pages 1500
           else
-            ./update-lists.sh
+            ./update-lists.sh --max-pages 1500
           fi
 
       - name: Commit and push
+        if: steps.check.outputs.run == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
