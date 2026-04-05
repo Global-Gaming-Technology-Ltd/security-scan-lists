@@ -20,6 +20,8 @@ GITHUB_API="https://api.github.com/advisories"
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
 LAST_UPDATED_FILE="$SCRIPT_DIR/LAST_UPDATED.txt"
+STATE_FILE="$SCRIPT_DIR/SCAN_STATE.txt"
+SCAN_COMPLETE=true
 
 # ── Read last check date (for incremental updates) ───────────────
 LAST_CHECK=""
@@ -32,6 +34,33 @@ info()   { echo "[INFO] $*"; }
 ok()     { echo "[PASS] $*"; }
 warn()   { echo "[WARN] $*"; }
 fail()   { echo "[FAIL] $*"; }
+
+# ── Resume state helpers ─────────────────────────────────────────
+get_resume_page() {
+    local eco="$1"
+    if [[ -f "$STATE_FILE" ]]; then
+        local p
+        p=$(grep "^${eco}:" "$STATE_FILE" 2>/dev/null | cut -d: -f2 | tr -d ' ')
+        [[ -n "$p" ]] && echo "$p" || echo ""
+    fi
+}
+
+save_state() {
+    local eco="$1" pg="$2"
+    if [[ -f "$STATE_FILE" ]] && grep -q "^${eco}:" "$STATE_FILE" 2>/dev/null; then
+        sed -i "s/^${eco}:.*/${eco}: ${pg}/" "$STATE_FILE"
+    else
+        echo "${eco}: ${pg}" >> "$STATE_FILE"
+    fi
+}
+
+clear_state() {
+    local eco="$1"
+    if [[ -f "$STATE_FILE" ]]; then
+        sed -i "/^${eco}:/d" "$STATE_FILE"
+        [[ -s "$STATE_FILE" ]] || rm -f "$STATE_FILE"
+    fi
+}
 
 # ── Prerequisites ─────────────────────────────────────────────────
 for cmd in curl jq; do
@@ -56,11 +85,17 @@ else
     info "Anonymous — rate limit: 60 req/hr"
 fi
 
-# ── Mode: incremental (default) or full ───────────────────────────
+# ── Mode: incremental (default) or full or resume ────────────────
 FULL_SCAN=false
+RESUMING=false
 if [[ "${1:-}" == "--full" ]]; then
     FULL_SCAN=true
-    info "Mode: FULL SCAN (all pages)"
+    rm -f "$STATE_FILE"
+    info "Mode: FULL SCAN (requested)"
+elif [[ -f "$STATE_FILE" ]]; then
+    FULL_SCAN=true
+    RESUMING=true
+    info "Mode: RESUME (continuing interrupted scan)"
 elif [[ -n "$LAST_CHECK" ]]; then
     info "Mode: incremental (since $LAST_CHECK)"
 else
@@ -77,6 +112,15 @@ fetch_malware() {
     local raw="$WORK/${ecosystem}_raw.txt"
     : > "$raw"
     local page=1 total_advisories=0
+    local interrupted=false
+
+    # Resume from saved page if available
+    local resume_page
+    resume_page=$(get_resume_page "$ecosystem")
+    if [[ -n "$resume_page" && "$resume_page" -gt 1 ]] 2>/dev/null; then
+        page=$resume_page
+        info "Resuming $ecosystem from page $page"
+    fi
 
     # Build query: incremental (updated since last check) or full
     local base_query="type=malware&ecosystem=$ecosystem&per_page=100"
@@ -94,10 +138,14 @@ fetch_malware() {
             "$GITHUB_API?${base_query}&page=$page" 2>/dev/null) || true
 
         if [[ "$http_code" == "403" ]]; then
-            warn "Rate limited at page $page"
+            warn "Rate limited at page $page — saving state for resume"
+            save_state "$ecosystem" "$page"
+            interrupted=true
             break
         elif [[ "$http_code" != "200" ]]; then
-            warn "HTTP $http_code at page $page — stopping"
+            warn "HTTP $http_code at page $page — saving state for resume"
+            save_state "$ecosystem" "$page"
+            interrupted=true
             break
         fi
 
@@ -110,9 +158,15 @@ fetch_malware() {
         info "  Page $page — $count advisories"
 
         [[ "$count" -lt 100 ]] && break
-        ((page++))
+        page=$((page + 1))
         sleep 1
     done
+
+    if [[ "$interrupted" == "true" ]]; then
+        SCAN_COMPLETE=false
+    else
+        clear_state "$ecosystem"
+    fi
 
     info "  Total advisories scanned: $total_advisories"
     sort -u "$raw" | grep -v '^$' > "$outfile" || true
@@ -185,12 +239,18 @@ count_entries() { grep -cv '^#\|^$' "$1" 2>/dev/null || echo 0; }
 info "npm: $(count_entries "$LISTS_DIR/malicious-npm-packages.txt") entries"
 info "nuget: $(count_entries "$LISTS_DIR/malicious-nuget-packages.txt") entries"
 
-# Write last-updated timestamp
-TS=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
-cat > "$SCRIPT_DIR/LAST_UPDATED.txt" <<EOF
+# Write last-updated timestamp ONLY if scan completed fully
+if [[ "$SCAN_COMPLETE" == "true" ]]; then
+    TS=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+    cat > "$LAST_UPDATED_FILE" <<EOF
 Last checked: $TS
 npm packages: $(count_entries "$LISTS_DIR/malicious-npm-packages.txt")
 nuget packages: $(count_entries "$LISTS_DIR/malicious-nuget-packages.txt")
 Source: GitHub Advisory Database (type=malware)
 EOF
-info "Done — $TS"
+    rm -f "$STATE_FILE"
+    ok "Scan complete — $TS"
+else
+    warn "Scan incomplete — will resume on next run"
+    info "Packages found so far have been saved to blocklists"
+fi
