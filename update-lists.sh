@@ -88,9 +88,17 @@ fi
 # ── Mode: incremental (default) or full or resume ────────────────
 FULL_SCAN=false
 RESUMING=false
-if [[ "${1:-}" == "--full" ]]; then
-    FULL_SCAN=true
-    rm -f "$STATE_FILE"
+MAX_PAGES=0  # 0 = unlimited
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --full)       FULL_SCAN=true; rm -f "$STATE_FILE"; shift ;;
+        --max-pages)  MAX_PAGES="$2"; shift 2 ;;
+        *)            shift ;;
+    esac
+done
+
+if [[ "$FULL_SCAN" == "true" ]]; then
     info "Mode: FULL SCAN (requested)"
 elif [[ -f "$STATE_FILE" ]]; then
     FULL_SCAN=true
@@ -102,6 +110,7 @@ else
     FULL_SCAN=true
     info "Mode: FULL SCAN (first run)"
 fi
+[[ "$MAX_PAGES" -gt 0 ]] 2>/dev/null && info "Page limit: $MAX_PAGES pages per ecosystem"
 
 # ═══════════════════════════════════════════════════════════════════
 #  Fetch all malware advisories for a given ecosystem
@@ -111,7 +120,7 @@ fetch_malware() {
     local outfile="$2"
     local raw="$WORK/${ecosystem}_raw.txt"
     : > "$raw"
-    local page=1 total_advisories=0
+    local page=1 total_advisories=0 pages_fetched=0
     local interrupted=false
 
     # Resume from saved page if available
@@ -159,6 +168,16 @@ fetch_malware() {
 
         [[ "$count" -lt 100 ]] && break
         page=$((page + 1))
+        pages_fetched=$((pages_fetched + 1))
+
+        # Stop if page limit reached
+        if [[ "$MAX_PAGES" -gt 0 && "$pages_fetched" -ge "$MAX_PAGES" ]]; then
+            info "  Page limit reached ($MAX_PAGES) — saving state for next run"
+            save_state "$ecosystem" "$page"
+            interrupted=true
+            break
+        fi
+
         sleep 1
     done
 
